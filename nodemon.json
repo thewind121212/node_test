@@ -1,0 +1,6 @@
+{
+  "watch": ["./"],          
+  "ext": "ts",                  
+  "exec": "npx bun run app.ts",     
+  "restartable": "rs"           
+}

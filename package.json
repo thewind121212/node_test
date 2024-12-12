@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bun": "^1.1.38",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ioredis": "^5.4.1",
+    "json-diff": "^1.0.6",
+    "moment-timezone": "^0.5.46",
+    "nodemon": "^3.1.7",
+    "tsx": "^4.19.2"
+  },
+  "scripts": {
+    "start": "bun run app.ts",
+    "dev": "nodemon",
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/json-diff": "^1.0.3",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
