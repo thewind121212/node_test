@@ -59,6 +59,7 @@ export const airQualityService = async (
 
     replace(homeServer, openMeteo);
     homeServer.timestamp = Date.now();
+    homeServer.locaitonId = locationId;
     if (IS_REDIS_HEALTHY) {
         redisClient.set(KEY_REDIS_PREFIX + `:${locationId}`, JSON.stringify(homeServer), 'EX', TTL_REDIS);
     }

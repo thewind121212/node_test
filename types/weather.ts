@@ -112,7 +112,9 @@ interface WeatherData {
   hourly: WeatherHourlyData;
   daily_units: DailyWeatherUnits;
   daily: WeatherDailyData;
+  locationId: string;
   timestamp: number;
+
 }
 
 

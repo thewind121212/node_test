@@ -5,7 +5,7 @@ import moment from 'moment';
 import { getAllKeyValueMatchPatternRedis, redisClient } from './redis';
 
 
-const TIME_REVALIDATE = 60 * 5 * 1000;
+const TIME_REVALIDATE = 60 * 1000;
 
 
 const revalidateWeatherData = async (isInit: boolean = false) => {
@@ -41,7 +41,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         // DEBUG ONLY
         if (dataWeatherUnit) {
             const dataWeather = JSON.parse(dataWeatherUnit);
-            if (checkTime(Number(dataWeather.timestamp), 50)) {
+            if (checkTime(Number(dataWeather.timestamp), 55)) {
                 revalidateCount++;
                 await weatherService(false, location.value.locationId.toString(), {
                     long: location.value.longtidue,
@@ -52,7 +52,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         }
         if (dataAirUnit) {
             const dataAir = JSON.parse(dataAirUnit);
-            if (checkTime(Number(dataAir.timestamp), 50)) {
+            if (checkTime(Number(dataAir.timestamp), 25)) {
                 revalidateCount++;
                 await airQualityService(false, location.value.locationId.toString(), {
                     long: location.value.longtidue,
@@ -77,7 +77,9 @@ export const revalidateRedis = async (parentPort: any) => {
     console.log(`${moment().tz('Asia/Bangkok').format('HH:mm:ss')} Worker revalidate redis is running`);
     setInterval(async () => {
         const count = await revalidateWeatherData();
-        parentPort.postMessage(`Trigged revalidate weather data at ${moment().tz('Asia/Bangkok').format('HH:mm:ss')} with ${count} data revalidated`);
+        if (count > 0) {
+            parentPort.postMessage(`Trigged revalidate weather data at ${moment().tz('Asia/Bangkok').format('HH:mm:ss')} with ${count} data revalidated`);
+        }
     }, TIME_REVALIDATE);
 
 }

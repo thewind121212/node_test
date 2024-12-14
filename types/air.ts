@@ -49,6 +49,7 @@ interface AirQualityData {
     hourly: HourlyData;
     daily_units: any;
     daily: any;
+    locaitonId: string;
     timestamp: number;
 }
 
