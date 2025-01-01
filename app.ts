@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 
 import { LocationService as Location } from "./types/geo";
 import { fetchLocationService } from './services/locations.services';
@@ -27,6 +28,7 @@ dotenv.config();
 
 const app = express();
 
+app.use(cors());
 
 app.use(express.json());
 

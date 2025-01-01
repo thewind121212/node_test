@@ -2,6 +2,7 @@
   "dependencies": {
     "axios": "^1.7.9",
     "bun": "^1.1.38",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "ioredis": "^5.4.1",
@@ -16,6 +17,7 @@
     "build": "tsc -p ."
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/json-diff": "^1.0.3",
     "@types/node": "^22.10.2",
