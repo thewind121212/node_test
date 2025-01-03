@@ -17,7 +17,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         key: string;
         value: {
             locationId: string;
-            longtidue: number;
+            longitude: number;
             latitude: number;
             timezone: string;
         };
@@ -27,13 +27,13 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         // DEBUG ONLY
         if (isInit) {
             await weatherService(false, location.value.locationId.toString(), {
-                long: location.value.longtidue,
+                long: location.value.longitude,
                 lat: location.value.latitude,
                 tz: location.value.timezone
             })
 
             await airQualityService(false, location.value.locationId.toString(), {
-                long: location.value.longtidue,
+                long: location.value.longitude,
                 lat: location.value.latitude,
                 tz: location.value.timezone
             })
@@ -44,7 +44,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
             if (checkTime(Number(dataWeather.timestamp), 55)) {
                 revalidateCount++;
                 await weatherService(false, location.value.locationId.toString(), {
-                    long: location.value.longtidue,
+                    long: location.value.longitude,
                     lat: location.value.latitude,
                     tz: location.value.timezone
                 })
@@ -55,7 +55,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
             if (checkTime(Number(dataAir.timestamp), 25)) {
                 revalidateCount++;
                 await airQualityService(false, location.value.locationId.toString(), {
-                    long: location.value.longtidue,
+                    long: location.value.longitude,
                     lat: location.value.latitude,
                     tz: location.value.timezone
                 })
