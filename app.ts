@@ -10,6 +10,7 @@ import moment from 'moment-timezone';
 import { Worker, isMainThread, parentPort } from 'worker_threads';
 import { redisClient } from './helper/redis';
 import { revalidateRedis } from './helper/revalidateRedis';
+import { geoFetcher } from './helper/fetcher';
 
 
 function createWorker(workerId: string, taskName: string) {
@@ -34,23 +35,61 @@ app.use(express.json());
 
 
 
+app.post('/geo_search', async (req, res) => {
+    const { geoQuery } = req.body;
 
-
-
-app.get('/weather', async (req, res) => {
-    const { locationName, manualTimezone, quickRetriveId } = req.query;
-    const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
-    const location = isQuickRetriveIdValid ? { locationId: quickRetriveId } : await fetchLocationService(locationName! as string);
-    const { locationId, longitude, latitude, timezone } = location as Location;
-
-    if (!location) {
-        res.status(404).send({
-            message: 'Location not found',
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+    if (geoQuery === undefined || geoQuery === null || !geoQuery) {
+        res.status(400).send({
+            message: 'Invalid request',
             data: null
         });
         return
     }
+
+    const data = await geoFetcher(geoQuery);
+
+    if (data) {
+        res.status(200).send({
+            message: 'Data fetched successfully',
+            data
+        });
+        return
+    }
+
+
+
+})
+
+
+app.get('/weather', async (req, res) => {
+    const { locationName, manualTimezone, quickRetriveId, latitudeRequest ,longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
+    const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
+
+    let longitude =  longitudeRequest
+    let latitude = latitudeRequest
+    let locationId = locationIdRequest
+    let timezone = timeZoneRequest
+
+
+  if (!isQuickRetriveIdValid && quickRetriveId)  {
+        res.status(404).send({
+            message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
+            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            data: null
+        });
+    return
+  }
+
+  if (!longitude || !latitude || !locationId) {
+        res.status(404).send({
+            message: 'Invalid Request',
+            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            data: null
+        });
+        return
+  }
+
+
 
     const weatherData = await weatherService(
         true,
@@ -122,8 +161,8 @@ app.get('/air-quality', async (req, res) => {
 
 if (isMainThread) {
     (async () => {
-        app.listen(3000, async () => {
-            console.log('Server is running on port 3000');
+        app.listen(4100, async () => {
+            console.log('Server is running on port 4100');
 
             const worker = createWorker('1', 'redisRevalidation');
             worker.on('message', (msg) => {
