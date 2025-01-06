@@ -51,6 +51,7 @@ const dailyParams = [
 const currentAirParams = [
   'us_aqi',
   'pm2_5',
+  'uv_index', 
   'carbon_monoxide'
 ];
 

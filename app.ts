@@ -119,20 +119,32 @@ app.get('/weather', async (req, res) => {
 
 
 app.get('/air-quality', async (req, res) => {
-    const { locationName, manualTimezone, quickRetriveId } = req.query;
+    const { locationName, manualTimezone, quickRetriveId, latitudeRequest ,longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
     const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
-    const location = isQuickRetriveIdValid ? { locationId: quickRetriveId } : await fetchLocationService(locationName! as string);
-    const { locationId, longitude, latitude, timezone } = location as Location;
 
-    if (!location) {
+    let longitude =  longitudeRequest
+    let latitude = latitudeRequest
+    let locationId = locationIdRequest
+    let timezone = timeZoneRequest
+
+
+  if (!isQuickRetriveIdValid && quickRetriveId)  {
         res.status(404).send({
-            message: 'Location not found',
+            message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
+            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            data: null
+        });
+    return
+  }
+
+  if (!longitude || !latitude || !locationId) {
+        res.status(404).send({
+            message: 'Invalid Request',
             current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
             data: null
         });
         return
-    }
-
+  }
     const airQualityData = await airQualityService(true,
         locationId,
         {
