@@ -1,18 +1,21 @@
-version: "3.7"
+version: "3.7" 
 
-services:
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-
-  app:
-    image: "oven/bun"
-    container_name: weather-api-v1
-    command: "bun run app.ts"
-    volumes:
+services: 
+  app: 
+    image: "oven/bun" 
+    container_name: weather-api-v1 
+    command: "bun run app.ts" 
+    volumes: 
       - .:/app
-    working_dir: /app
-    ports:
-      - "3000:3000"
+      - ./resolv.conf:/etc/resolv.conf
+    working_dir: /app 
+    ports: 
+      - "3300:4100"
+    networks: 
+      home: 
+        ipv4_address: 172.19.0.153 
+
+networks: 
+  home:
+    external: true 
+    name: my-dns

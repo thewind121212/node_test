@@ -17,6 +17,7 @@ interface CurrentData {
     time: string;
     interval: number;
     us_aqi: number;
+    uv_index: number;
     pm2_5: number;
     carbon_monoxide: number;
 }
