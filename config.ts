@@ -21,6 +21,7 @@ const hourlyParams = [
   'precipitation', 
   'rain', 
   'weather_code', 
+  'snowfall',
   'cloud_cover', 
   'wind_speed_10m', 
   'wind_direction_10m', 
