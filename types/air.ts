@@ -10,6 +10,10 @@ interface CurrentUnits {
     interval: Unit;
     us_aqi: Unit;
     pm2_5: Unit;
+    pm10: Unit;
+    carbon_dioxide: Unit,
+    sulphur_dioxide: Unit,
+    ozone: Unit,
     carbon_monoxide: Unit;
 }
 
@@ -19,6 +23,10 @@ interface CurrentData {
     us_aqi: number;
     uv_index: number;
     pm2_5: number;
+    pm10: number;
+    carbon_dioxide: number,
+    sulphur_dioxide: number,
+    ozone: number,
     carbon_monoxide: number;
 }
 
