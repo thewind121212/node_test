@@ -56,7 +56,7 @@ const currentAirParams = [
   'carbon_dioxide',
   'uv_index', 
   'carbon_monoxide',
-  'nitrogen_dioxide',
+  'sulphur_dioxide',
   'ozone'
 ];
 
