@@ -63,6 +63,7 @@ const currentAirParams = [
 const hourlyAirParams = [
   'pm2_5',
   'carbon_monoxide',
+  'uv_index', 
   'us_aqi'
 ];
 
