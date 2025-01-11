@@ -1,7 +1,7 @@
 
 import { geoFetcher, airQualityFetcher } from '../helper/fetcher';
 import { redisClient } from '../helper/redis';
-import { replace } from '../helper/utils';
+import { isCurrentDayAfterTimestamp, replace } from '../helper/utils';
 import { AirQualityData } from '../types/air';
 import { IS_REDIS_HEALTHY } from '../app';
 
@@ -15,7 +15,7 @@ const DEFAULT_LONGITUDE = 106.660172;
 const DEFAULT_TIMEZONE = 'Asia/Ho_Chi_Minh';
 
 const KEY_REDIS_PREFIX = 'air-quality';
-const TTL_REDIS = 60 * 30;
+const TTL_REDIS = 60 * 15;
 
 export const airQualityService = async (
     isGetFromCache: boolean = true,
@@ -29,11 +29,17 @@ export const airQualityService = async (
 ): Promise<AirQualityData | null> => {
     if (isGetFromCache && IS_REDIS_HEALTHY) {
         const redisRetrive = await redisClient.get(KEY_REDIS_PREFIX + `:${locationId}`);
-        if (redisRetrive) return JSON.parse(redisRetrive);
+
+        if (redisRetrive) {
+            const cacheTimeStamps = JSON.parse(redisRetrive).timestamp;
+            const isPastDay = isCurrentDayAfterTimestamp(cacheTimeStamps, timezone);
+            if (!isPastDay) {
+                return JSON.parse(redisRetrive);
+            }
+        }
     }
 
 
-    const city = await geoFetcher('Ho Chi Minh');
     const fetcherData: {
         latitude?: number,
         longitude?: number

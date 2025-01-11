@@ -2,7 +2,7 @@
 import { weatherFetcher } from '../helper/fetcher';
 import { IS_REDIS_HEALTHY } from '../app';
 import { redisClient } from '../helper/redis';
-import { replace } from '../helper/utils';
+import { replace, isCurrentDayAfterTimestamp } from '../helper/utils';
 import { WeatherData } from '../types/weather';
 
 
@@ -16,7 +16,7 @@ const openMeteoUrl = process.env.OPEN_MEOTEO_URL || 'https://api.open-meteo.com'
 const homeServerUrl = process.env.HOME_SERVER_URL || 'http://localhost:8080';
 
 const KEY_REDIS_PREFIX = 'weather';
-const TTL_REDIS = 60 * 60 * 1;
+const TTL_REDIS = 60 * 60 * 0.5;
 
 export const weatherService = async (isGetFromCache: boolean = true,
     locationId: string = DEFAULT_LOCATION_ID,
@@ -26,10 +26,21 @@ export const weatherService = async (isGetFromCache: boolean = true,
         tz: timezone = DEFAULT_TIMEZONE
     }
 ): Promise<WeatherData | null> => {
+
+
+
+
     if (isGetFromCache && IS_REDIS_HEALTHY) {
         const redisRetrive = await redisClient.get(KEY_REDIS_PREFIX + `:${locationId}`);
-        if (redisRetrive) return JSON.parse(redisRetrive);
+        if (redisRetrive) {
+            const cacheTimeStamps = JSON.parse(redisRetrive).timestamp;
+            const isPastDay = isCurrentDayAfterTimestamp(cacheTimeStamps, timezone);
+            if (!isPastDay) {
+                return JSON.parse(redisRetrive);
+            }
+        }
     }
+
 
     const fetcherData: {
         latitude?: number,

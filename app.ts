@@ -2,15 +2,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 
-import { LocationService as Location } from "./types/geo";
-import { fetchLocationService } from './services/locations.services';
 import { weatherService } from './services/weather.services';
 import { airQualityService } from './services/airQuality.services';
 import moment from 'moment-timezone';
 import { Worker, isMainThread, parentPort } from 'worker_threads';
 import { redisClient } from './helper/redis';
 import { revalidateRedis } from './helper/revalidateRedis';
-import { geoFetcher } from './helper/fetcher';
+import { geoFetcher, moonPhaseFetcher } from './helper/fetcher';
+import { moonPhaseServices } from './services/moonPhase.services';
 
 
 function createWorker(workerId: string, taskName: string) {
@@ -62,32 +61,44 @@ app.post('/geo_search', async (req, res) => {
 
 
 app.get('/weather', async (req, res) => {
-    const { locationName, manualTimezone, quickRetriveId, latitudeRequest ,longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
+    const { manualTimezone, quickRetriveId, latitudeRequest, longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
     const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
 
-    let longitude =  longitudeRequest
+    let longitude = longitudeRequest
     let latitude = latitudeRequest
-    let locationId = locationIdRequest
-    let timezone = timeZoneRequest
+    let locationId = locationIdRequest as string
+    let timezone = timeZoneRequest as string
 
 
-  if (!isQuickRetriveIdValid && quickRetriveId)  {
+    const data = await redisClient.get(`location:${quickRetriveId as string}`);
+    if (!data) {
+        const locationData = {
+            locationId: locationId as string,
+            longitude: Number(longitude),
+            latitude: Number(latitude),
+            timezone: timezone as string
+        }
+        await redisClient.set(`location:${locationId}`, JSON.stringify(locationData));
+    }
+
+
+    if (!isQuickRetriveIdValid && quickRetriveId) {
         res.status(404).send({
             message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
-            data: null
-        });
-    return
-  }
-
-  if (!longitude || !latitude || !locationId) {
-        res.status(404).send({
-            message: 'Invalid Request',
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            current: moment().tz(timezone).format('HH:mm:ss'),
             data: null
         });
         return
-  }
+    }
+
+    if (!longitude || !latitude || !locationId) {
+        res.status(404).send({
+            message: 'Invalid Request',
+            current: moment().tz(timezone).format('HH:mm:ss'),
+            data: null
+        });
+        return
+    }
 
 
 
@@ -95,14 +106,14 @@ app.get('/weather', async (req, res) => {
         true,
         locationId,
         {
-            long: longitude,
-            lat: latitude,
+            long: Number(longitude),
+            lat: Number(latitude),
             tz: manualTimezone ? manualTimezone as string : timezone
         }
     );
     if (weatherData) {
         res.status(200).send({
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            current: moment().tz(timezone).format('HH:mm:ss'),
             message: 'Data fetched successfully',
             data: weatherData
         });
@@ -111,7 +122,7 @@ app.get('/weather', async (req, res) => {
 
     res.status(500).send({
         message: 'Error fetching data',
-        current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+        current: moment().tz(timezone).format('HH:mm:ss'),
         data: null
     });
 });
@@ -119,42 +130,54 @@ app.get('/weather', async (req, res) => {
 
 
 app.get('/air-quality', async (req, res) => {
-    const { locationName, manualTimezone, quickRetriveId, latitudeRequest ,longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
+    const { manualTimezone, quickRetriveId, latitudeRequest, longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
     const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
 
-    let longitude =  longitudeRequest
+    let longitude = longitudeRequest
     let latitude = latitudeRequest
-    let locationId = locationIdRequest
-    let timezone = timeZoneRequest
+    let locationId = locationIdRequest as string
+    let timezone = (timeZoneRequest ? timeZoneRequest : 'Asia/Ho_Chi_Minh') as string
 
 
-  if (!isQuickRetriveIdValid && quickRetriveId)  {
+    const data = await redisClient.get(`location:${quickRetriveId as string}`);
+    if (!data) {
+        const locationData = {
+            locationId: locationId as string,
+            longitude: Number(longitude),
+            latitude: Number(latitude),
+            timezone: timezone as string
+        }
+        await redisClient.set(`location:${locationId}`, JSON.stringify(locationData));
+    }
+
+
+    if (!isQuickRetriveIdValid && quickRetriveId) {
         res.status(404).send({
             message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
-            data: null
-        });
-    return
-  }
-
-  if (!longitude || !latitude || !locationId) {
-        res.status(404).send({
-            message: 'Invalid Request',
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            current: moment().tz(timezone).format('HH:mm:ss'),
             data: null
         });
         return
-  }
+    }
+
+    if (!longitude || !latitude || !locationId) {
+        res.status(404).send({
+            message: 'Invalid Request',
+            current: moment().tz(timezone).format('HH:mm:ss'),
+            data: null
+        });
+        return
+    }
     const airQualityData = await airQualityService(true,
         locationId,
         {
-            long: longitude,
-            lat: latitude,
+            long: Number(longitude),
+            lat: Number(latitude),
             tz: manualTimezone ? manualTimezone as string : timezone
         });
     if (airQualityData) {
         res.status(200).send({
-            current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+            current: moment().tz(timezone).format('HH:mm:ss'),
             message: 'Data fetched successfully',
             data: airQualityData
         });
@@ -163,11 +186,75 @@ app.get('/air-quality', async (req, res) => {
 
     res.status(500).send({
         message: 'Error fetching data',
-        current: moment().tz('Asia/Bangkok').format('HH:mm:ss'),
+        current: moment().tz(timezone).format('HH:mm:ss'),
         data: null
     });
 });
 
+
+
+app.get('/moon-phase', async (req, res) => {
+    const { manualTimezone, quickRetriveId, latitudeRequest, longitudeRequest, locationIdRequest, timeZoneRequest } = req.query;
+    const isQuickRetriveIdValid = quickRetriveId && await redisClient.get(`location:${quickRetriveId as string}`);
+
+    let longitude = longitudeRequest
+    let latitude = latitudeRequest
+    let locationId = locationIdRequest as string
+    let timezone = (timeZoneRequest ? timeZoneRequest : 'Asia/Ho_Chi_Minh') as string
+
+
+    const data = await redisClient.get(`location:${quickRetriveId as string}`);
+    if (!data) {
+        const locationData = {
+            locationId: locationId as string,
+            longitude: Number(longitude),
+            latitude: Number(latitude),
+            timezone: timezone as string
+        }
+        await redisClient.set(`location:${locationId}`, JSON.stringify(locationData));
+    }
+
+
+    if (!isQuickRetriveIdValid && quickRetriveId) {
+        res.status(404).send({
+            message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
+            current: moment().tz(timezone).format('HH:mm:ss'),
+            data: null
+        });
+        return
+    }
+
+    if (!longitude || !latitude || !locationId) {
+        res.status(404).send({
+            message: 'Invalid Request',
+            current: moment().tz(timezone).format('HH:mm:ss'),
+            data: null
+        });
+        return
+    }
+    const moonPhase = await moonPhaseServices(true,
+        locationId,
+        {
+            long: Number(longitude),
+            lat: Number(latitude),
+            timezone: manualTimezone ? manualTimezone as string : timezone
+        });
+
+    if (moonPhase) {
+        res.status(200).send({
+            current: moment().tz(timezone).format('HH:mm:ss'),
+            message: 'Data fetched successfully',
+            data: moonPhase
+        });
+        return
+    }
+
+    res.status(500).send({
+        message: 'Error fetching data',
+        current: moment().tz(timezone).format('HH:mm:ss'),
+        data: null
+    });
+});
 
 
 

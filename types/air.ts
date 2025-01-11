@@ -33,6 +33,7 @@ interface CurrentData {
 interface HourlyUnits {
     time: Unit;
     pm2_5: Unit;
+    pm10: Unit;
     carbon_monoxide: Unit;
     us_aqi: Unit;
 }
@@ -40,6 +41,7 @@ interface HourlyUnits {
 interface HourlyData {
     time: string[];
     pm2_5: (number)[];
+    pm10: (number)[];
     carbon_monoxide: (number)[];
     us_aqi: (number)[];
 }

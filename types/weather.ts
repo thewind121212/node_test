@@ -9,6 +9,7 @@ enum Unit {
   Millimeters = "mm",
   WMOCode = "wmo code",
   KilometersPerHour = "km/h",
+  hPa = "hPa",
   Hour = "h",
   None = "",
 }
@@ -21,6 +22,7 @@ interface CurrentWeatherUnits {
   apparent_temperature: Unit.Celsius;
   precipitation: Unit.Millimeters;
   rain: Unit.Millimeters;
+  surface_pressure: Unit.hPa;
   weather_code: Unit.WMOCode;
   cloud_cover: Unit.Percent;
   wind_speed_10m: Unit.KilometersPerHour;

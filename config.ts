@@ -1,10 +1,11 @@
 // params using for weather
 const currentParams = [
-  'temperature_2m', 
+  'temperature_2m',
   'relative_humidity_2m', 
   'apparent_temperature', 
   'is_day', 
   'precipitation', 
+  'surface_pressure',
   'rain', 
   'weather_code', 
   'cloud_cover', 
@@ -63,6 +64,7 @@ const currentAirParams = [
 const hourlyAirParams = [
   'pm2_5',
   'carbon_monoxide',
+  'pm10',
   'uv_index', 
   'us_aqi'
 ];

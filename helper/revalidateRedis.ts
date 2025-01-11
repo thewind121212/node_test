@@ -41,7 +41,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         // DEBUG ONLY
         if (dataWeatherUnit) {
             const dataWeather = JSON.parse(dataWeatherUnit);
-            if (checkTime(Number(dataWeather.timestamp), 55)) {
+            if (checkTime(Number(dataWeather.timestamp), 25)) {
                 revalidateCount++;
                 await weatherService(false, location.value.locationId.toString(), {
                     long: location.value.longitude,
@@ -52,7 +52,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         }
         if (dataAirUnit) {
             const dataAir = JSON.parse(dataAirUnit);
-            if (checkTime(Number(dataAir.timestamp), 25)) {
+            if (checkTime(Number(dataAir.timestamp), 10)) {
                 revalidateCount++;
                 await airQualityService(false, location.value.locationId.toString(), {
                     long: location.value.longitude,

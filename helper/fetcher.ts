@@ -3,6 +3,7 @@ import { GeoResponse } from "../types/geo";
 import { WeatherData } from '../types/weather';
 import { dailyParams, currentParams, hourlyParams, currentAirParams, hourlyAirParams } from '../config';
 import { AirQualityData } from '../types/air';
+import { AstronomyData } from '../types/moonPhase';
 
 
 
@@ -71,5 +72,34 @@ const airQualityFetcher = async (url: string, latitude: number, longitude: numbe
 };
 
 
+const moonUrl = 'https://api.astronomyapi.com/api/v2/bodies/positions'
 
-export { weatherFetcher, geoFetcher, airQualityFetcher };
+const moonPhaseFetcher = async (latitude: number, longitude: number, from_date: string, to_date: string): Promise<AstronomyData | null> => {
+
+
+  try {
+    const response = await axios.get(process.env.MOON_PHASE_URL ?? moonUrl, {
+      params: {
+        latitude: latitude,
+        longitude: longitude,
+        elevation: 1,
+        from_date,
+        to_date,
+        time: '18:00:00',
+      },
+      headers: {
+        'Authorization': process.env.MOON_PHASE_KEY
+      }
+    })
+    return response.data
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null
+  }
+
+}
+
+
+
+export { weatherFetcher, geoFetcher, airQualityFetcher, moonPhaseFetcher };
