@@ -16,7 +16,7 @@ const openMeteoUrl = process.env.OPEN_MEOTEO_URL || 'https://api.open-meteo.com'
 const homeServerUrl = process.env.HOME_SERVER_URL || 'http://localhost:8080';
 
 const KEY_REDIS_PREFIX = 'weather';
-const TTL_REDIS = 60 * 60 * 0.5;
+const TTL_REDIS = 60 * 30;
 
 export const weatherService = async (isGetFromCache: boolean = true,
     locationId: string = DEFAULT_LOCATION_ID,

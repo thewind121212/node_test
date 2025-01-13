@@ -52,7 +52,7 @@ const revalidateWeatherData = async (isInit: boolean = false) => {
         }
         if (dataAirUnit) {
             const dataAir = JSON.parse(dataAirUnit);
-            if (checkTime(Number(dataAir.timestamp), 10)) {
+            if (checkTime(Number(dataAir.timestamp), 25)) {
                 revalidateCount++;
                 await airQualityService(false, location.value.locationId.toString(), {
                     long: location.value.longitude,

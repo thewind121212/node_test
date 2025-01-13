@@ -15,7 +15,7 @@ const DEFAULT_LONGITUDE = 106.660172;
 const DEFAULT_TIMEZONE = 'Asia/Ho_Chi_Minh';
 
 const KEY_REDIS_PREFIX = 'air-quality';
-const TTL_REDIS = 60 * 15;
+const TTL_REDIS = 60 * 30;
 
 export const airQualityService = async (
     isGetFromCache: boolean = true,
