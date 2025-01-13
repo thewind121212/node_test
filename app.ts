@@ -76,7 +76,7 @@ app.get('/weather', async (req, res) => {
             locationId: locationId as string,
             longitude: Number(longitude),
             latitude: Number(latitude),
-            timezone: timezone as string
+            let timezone = (timeZoneRequest ? timeZoneRequest : 'Asia/Ho_Chi_Minh') as string
         }
         await redisClient.set(`location:${locationId}`, JSON.stringify(locationData));
     }
@@ -154,7 +154,7 @@ app.get('/air-quality', async (req, res) => {
     if (!isQuickRetriveIdValid && quickRetriveId) {
         res.status(404).send({
             message: 'Invalid Request Please Provide The Valid QuickRetriveId or try to fetch with out it',
-            current: moment().tz(timezone).format('HH:mm:ss'),
+            let timezone = (timeZoneRequest ? timeZoneRequest : 'Asia/Ho_Chi_Minh') as string
             data: null
         });
         return
