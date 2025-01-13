@@ -114,30 +114,35 @@ export const calcMoonPhase = (moonData: AstronomyData): MoonReturn[] => {
                     date: data[i].date,
                     moonPhase: 'New Moon'
                 })
+                continue;
             }
             if (previousPhase === 'Waning Crescent' && currentPhase === 'Waxing Crescent') {
                 dataReturn.push({
                     date: data[i].date,
                     moonPhase: 'New Moon'
                 })
+                continue;
             }
             if (previousPhase === 'Waxing Crescent' && currentPhase === 'Waxing Gibbous') {
                 dataReturn.push({
                     date: data[i].date,
                     moonPhase: 'First Quarter'
                 })
+                continue;
             }
             if (previousPhase === 'Waxing Gibbous' && currentPhase === 'Waning Gibbous') {
                 dataReturn.push({
                     date: data[i].date,
                     moonPhase: 'Full Moon'
                 })
+                continue;
             }
             if (previousPhase === 'Waning Gibbous' && currentPhase === 'Waning Crescent') {
                 dataReturn.push({
                     date: data[i].date,
                     moonPhase: 'Last Quarter'
                 })
+                continue;
             }
 
             dataReturn.push({
@@ -154,30 +159,35 @@ export const calcMoonPhase = (moonData: AstronomyData): MoonReturn[] => {
                 date: data[i].date,
                 moonPhase: 'New Moon'
             })
+            continue;
         }
         if (currentPhase === 'Waxing Crescent' && nextPhase === 'Waxing Gibbous') {
             dataReturn.push({
                 date: data[i].date,
                 moonPhase: 'First Quarter'
             })
+            continue;
         }
         if (currentPhase === 'Waxing Gibbous' && nextPhase === 'Waning Gibbous') {
             dataReturn.push({
                 date: data[i].date,
                 moonPhase: 'Full Moon'
             })
+            continue;
         }
         if (currentPhase === 'Waning Gibbous' && nextPhase === 'Waning Crescent') {
             dataReturn.push({
                 date: data[i].date,
                 moonPhase: 'Last Quarter'
             })
+            continue;
         }
 
         dataReturn.push({
             date: data[i].date,
             moonPhase: data[i].extraInfo.phase?.string as responseMoonPhaseType
         })
+        continue;
     }
 
 
