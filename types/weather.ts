@@ -61,6 +61,8 @@ interface DailyWeatherUnits {
   rain_sum: Unit.Millimeters;
   precipitation_hours: Unit.Hour;
   precipitation_probability_max: Unit.Percent;
+  showers_sum: Unit.Millimeters;
+  snowfall_sum: Unit.Centimeters;
 }
 
 interface CurrentWeatherData {
