@@ -7,6 +7,7 @@ enum Unit {
   Celsius = "°C",
   Percent = "%",
   Millimeters = "mm",
+  Centimeters = "cm",
   WMOCode = "wmo code",
   KilometersPerHour = "km/h",
   hPa = "hPa",
@@ -40,6 +41,11 @@ interface HourWeatherUnits {
   rain: Unit.Millimeters;
   weather_code: Unit.WMOCode;
   cloud_cover: Unit.Percent;
+  wind_speed_10m: Unit.KilometersPerHour;
+  wind_direction_10m: Unit.None;
+  wind_gusts_10m: Unit.KilometersPerHour;
+  showers: Unit.Millimeters;
+  snowfall: Unit.Centimeters;
 }
 
 interface DailyWeatherUnits {
@@ -82,6 +88,11 @@ interface WeatherHourlyData {
   rain: number[];
   weather_code: string[];
   cloud_cover: number[];
+  wind_speed_10m: number[];
+  wind_direction_10m: number[];
+  wind_gusts_10m: number[];
+  showers: number[];
+  snowfall: number[];
 }
 
 
@@ -93,11 +104,17 @@ interface WeatherDailyData {
   apparent_temperature_max: number[];
   apparent_temperature_min: number[];
   sunrise: string[];
+  sunset: string[];
+  daylight_duration: string[];
   uv_index_max: number[];
   precipitation_sum: number[];
+  showers_sum: number[];
+  snowfall_sum: number[];
   rain_sum: number[];
   precipitation_hours: number[];
   precipitation_probability_max: number[];
+  wind_speed_10m_max: number[];
+  wind_gusts_10m_max: number[];
 }
 
 interface WeatherData {
