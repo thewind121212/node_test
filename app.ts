@@ -8,7 +8,7 @@ import moment from 'moment-timezone';
 import { Worker, isMainThread, parentPort } from 'worker_threads';
 import { redisClient } from './helper/redis';
 import { revalidateRedis } from './helper/revalidateRedis';
-import { geoFetcher, moonPhaseFetcher } from './helper/fetcher';
+import { geoFetcher } from './helper/fetcher';
 import { moonPhaseServices } from './services/moonPhase.services';
 
 
@@ -18,6 +18,12 @@ function createWorker(workerId: string, taskName: string) {
 
 
 export let IS_REDIS_HEALTHY = false;
+const corsOptions = {
+    origin: 'https://weather.wliafdew.dev', 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+    credentials: true, 
+};
+
 
 
 export const setRedisStatus = (status: boolean) => {
@@ -28,7 +34,7 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
