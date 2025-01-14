@@ -27,8 +27,8 @@ const hourlyParams = [
   'wind_speed_10m',
   'wind_direction_10m',
   'wind_gusts_10m',
-  // 'showers',
-  // 'snowfall'
+  'showers',
+  'snowfall'
 ]
 
 
@@ -43,8 +43,8 @@ const dailyParams = [
   'daylight_duration',
   'uv_index_max',
   'precipitation_sum',
-  // 'showers_sum',
-  // 'snowfall_sum',
+  'showers_sum',
+  'snowfall_sum',
   'rain_sum',
   'precipitation_hours',
   'precipitation_probability_max',
